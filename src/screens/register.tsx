@@ -3,40 +3,51 @@ import { Text } from "react-native";
 import { Input } from 'react-native-elements' 
 import { ButtonText, ButtonWrapper, ContainerRegister, RegisterButton, ReserveText, ReserveWrapper } from "../styles";
 import { Picker } from "@react-native-picker/picker";
+import {dateMask, cpfMask} from "../utils/masks"
 
 const RegisterScreen:React.FC = () =>  {
-  const [text, setText] = useState('')
+  const [date, setDate] = useState('')
+  const [name, setName] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [position, setPosition] = useState('')
   const [selected, setSelected] = useState('')
 
   return(
     <ContainerRegister>
       <Input
         label='Nome'
-        value={text}
-        onChangeText={(text: string) => setText(text)}
+        value={name}
+        onChangeText={(text: string) => setName(text)}
         placeholder='Nome completo (obrigatório)*'
         errorMessage={''}
       />
       <Input
         label='Data de nascimento'
-        value={text}
+        value={date}
         keyboardType='number-pad'
-        onChangeText={(text: string) => setText(text)}
+        maxLength={10}
+        onChangeText={(text: string) => {
+          let value: any = dateMask(text)
+          setDate(value)
+        }}
         placeholder='dd/mm/yyyy (obrigatório)*'
         errorMessage={''}
       />
       <Input
         label='CPF'
-        value={text}
+        value={cpf}
         keyboardType='number-pad'
-        onChangeText={(text: string) => setText(text)}
+        onChangeText={(text: string) => {
+          let value = cpfMask(text)
+          setCpf(value)
+        }}
         placeholder='999.999.999-99 (obrigatório)*'
         errorMessage={''}
       />
       <Input
         label='Posição'
-        value={text}
-        onChangeText={(text: string) => setText(text)}
+        value={position}
+        onChangeText={(text: string) => setPosition(text)}
         placeholder='Ex: Goleiro, lateral, etc.'
         errorMessage={''}
       />
