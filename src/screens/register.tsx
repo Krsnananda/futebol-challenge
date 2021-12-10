@@ -1,9 +1,10 @@
 import React, {useState} from "react";
-import { useNavigation } from "@react-navigation/native"
-import { Text, ToastAndroid } from "react-native";
+import { StackActions, useNavigation } from '@react-navigation/native';
+import { ToastAndroid } from "react-native";
 import { Input } from 'react-native-elements' 
 import { ButtonText, ButtonWrapper, ContainerRegister, RegisterButton, ReserveText, ReserveWrapper } from "../styles";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 /**
  * ========
  * Utils
@@ -13,12 +14,14 @@ import {dateMask, cpfMask} from "../utils/masks"
 import { validateCpf, validateDate } from "../utils/validations"
 
 const RegisterScreen:React.FC = () =>  {
+  const [roles, setRoles] = useState(['Goleiro', 'Lateral', 'Zagueiro', 'Volante', 'Meia', 'Atacante'])
   const [date, setDate] = useState('')
   const [name, setName] = useState('')
   const [cpf, setCpf] = useState('')
   const [position, setPosition] = useState('')
   const [selected, setSelected] = useState('')
-  const {navigate} = useNavigation()
+  const pushAction = StackActions.push('List')
+  const navigation = useNavigation()
 
   const validateForm = () => {
     return Boolean(date && name && cpf && validateCpf(cpf) && validateDate(date))
@@ -26,12 +29,21 @@ const RegisterScreen:React.FC = () =>  {
   
   const showToast = () => {
     ToastAndroid.showWithGravity(
-      "Preencha todos os campos corretamente",
+      "Campos nome, data de nascimento e cpf são obrigatórios, favor preencher corretamente",
       ToastAndroid.LONG,
       ToastAndroid.CENTER
     );
   };
 
+  const saveDate = () => {
+    const user = {name: name, date: date, cpf: cpf, position: position, reserve: selected}
+    console.log(user)
+    try {
+      AsyncStorage.setItem(`@time:${cpf}`, JSON.stringify(user))
+    } catch (error) {
+      console.log(error)      
+    }
+  }
 
   return(
     <ContainerRegister>
@@ -52,7 +64,7 @@ const RegisterScreen:React.FC = () =>  {
           setDate(value)
         }}
         placeholder='dd/mm/yyyy (obrigatório)*'
-        errorMessage={!validateDate(date) ? 'Data de nascimento inválida' : ''}
+        errorMessage={!validateDate(date) && date !== '' ? 'Data de nascimento inválida' : ''}
       />
       <Input
         label='CPF'
@@ -66,27 +78,32 @@ const RegisterScreen:React.FC = () =>  {
         placeholder='999.999.999-99 (obrigatório)*'
         errorMessage={!validateCpf(cpf) && cpf !== '' ? 'Cpf inválido' : ''}
       />
-      <Input
-        label='Posição'
-        value={position}
-        onChangeText={(text: string) => setPosition(text)}
-        placeholder='Ex: Goleiro, lateral, etc.'
-        errorMessage={''}
-      />
+      <ReserveWrapper>
+        <ReserveText>Posição</ReserveText>
+      </ReserveWrapper>
+      <Picker
+        style={{marginLeft: 5}}
+        selectedValue={position}
+        onValueChange={(item) => setPosition(item)}
+      >
+          {roles.map((item, index) => (
+            <Picker.Item key={index} color={'#878682'} label={item} value={item} />
+          ))}
+      </Picker>
       <ReserveWrapper>
         <ReserveText>Reserva</ReserveText>
       </ReserveWrapper>
       <Picker
-      style={{marginLeft: 5}}
+        style={{marginLeft: 5}}
         selectedValue={selected}
         onValueChange={(item) => setSelected(item)}
-        >
+      >
         <Picker.Item color={'#878682'} label='SIM' value='SIM'/>
         <Picker.Item color={'#878682'} label='NÃO' value='NÃO'/>
       </Picker>
       <ButtonWrapper>
         <RegisterButton onPress={() => {
-          validateForm() ? navigate('List' as never, {} as never) : showToast()
+          validateForm() ? (saveDate(), navigation.dispatch(pushAction)) : showToast()
         }}>
           <ButtonText>Salvar</ButtonText>
         </RegisterButton>

@@ -22,6 +22,22 @@ export const EmptyList = styled.Text`
   margin: 100px 0;
   font-weight: bold;
 `
+export const List = styled.View`
+  margin: 100px 0;
+  `
+export const ItemList = styled.View`
+  flex-direction: row;
+  padding: 20px 0;
+  width: ${Dimensions.get('screen').width - 100}px;
+  border-bottom-width: 1px;
+  border-bottom-color: #878682;
+  justify-content: center;
+`
+export const Player = styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+` 
+
 export const RegisterButton = styled.TouchableOpacity`
   width: 80%;
   border-radius: 50px;
