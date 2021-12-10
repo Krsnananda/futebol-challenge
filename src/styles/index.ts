@@ -27,17 +27,28 @@ export const List = styled.View`
   `
 export const ItemList = styled.View`
   flex-direction: row;
-  padding: 20px 0;
+  padding: 20px 0 20px 5px;
   width: ${Dimensions.get('screen').width - 100}px;
   border-bottom-width: 1px;
   border-bottom-color: #878682;
-  justify-content: center;
 `
 export const Player = styled.Text`
   font-size: 20px;
   font-weight: bold;
-` 
-
+  flex: 1;
+`
+export const EditIcon = styled.Image`
+  width: 30px;
+  height: 30px;
+  align-self: center;
+  margin: 0 10px 0 0;
+`
+export const CloseIcon = styled.Image`
+  width: 24px;
+  height: 24px;
+  align-self: center;
+  margin: 0 0 0 10px;
+`
 export const RegisterButton = styled.TouchableOpacity`
   width: 80%;
   border-radius: 50px;
