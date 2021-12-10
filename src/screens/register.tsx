@@ -28,7 +28,6 @@ const RegisterScreen:React.FC<Props> = ({route}) =>  {
   const pushAction = StackActions.push('List')
   const navigation = useNavigation()
 
-console.log(params.user)
   const validateForm = () => {
     return Boolean(date && name && cpf && validateCpf(cpf) && validateDate(date))
   }

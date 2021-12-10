@@ -43,7 +43,7 @@ export const EditIcon = styled.Image`
   align-self: center;
   margin: 0 10px 0 0;
 `
-export const CloseIcon = styled.Image`
+export const DeleteIcon = styled.Image`
   width: 24px;
   height: 24px;
   align-self: center;
