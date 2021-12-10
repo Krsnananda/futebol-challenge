@@ -1,9 +1,16 @@
 import React, {useState} from "react";
-import { Text } from "react-native";
+import { useNavigation } from "@react-navigation/native"
+import { Text, ToastAndroid } from "react-native";
 import { Input } from 'react-native-elements' 
 import { ButtonText, ButtonWrapper, ContainerRegister, RegisterButton, ReserveText, ReserveWrapper } from "../styles";
 import { Picker } from "@react-native-picker/picker";
+/**
+ * ========
+ * Utils
+ * ========
+ */
 import {dateMask, cpfMask} from "../utils/masks"
+import { validateCpf, validateDate } from "../utils/validations"
 
 const RegisterScreen:React.FC = () =>  {
   const [date, setDate] = useState('')
@@ -11,6 +18,20 @@ const RegisterScreen:React.FC = () =>  {
   const [cpf, setCpf] = useState('')
   const [position, setPosition] = useState('')
   const [selected, setSelected] = useState('')
+  const {navigate} = useNavigation()
+
+  const validateForm = () => {
+    return Boolean(date && name && cpf && validateCpf(cpf) && validateDate(date))
+  }
+  
+  const showToast = () => {
+    ToastAndroid.showWithGravity(
+      "Preencha todos os campos corretamente",
+      ToastAndroid.LONG,
+      ToastAndroid.CENTER
+    );
+  };
+
 
   return(
     <ContainerRegister>
@@ -31,18 +52,19 @@ const RegisterScreen:React.FC = () =>  {
           setDate(value)
         }}
         placeholder='dd/mm/yyyy (obrigatório)*'
-        errorMessage={''}
+        errorMessage={!validateDate(date) ? 'Data de nascimento inválida' : ''}
       />
       <Input
         label='CPF'
         value={cpf}
         keyboardType='number-pad'
+        maxLength={14}
         onChangeText={(text: string) => {
           let value = cpfMask(text)
           setCpf(value)
         }}
         placeholder='999.999.999-99 (obrigatório)*'
-        errorMessage={''}
+        errorMessage={!validateCpf(cpf) && cpf !== '' ? 'Cpf inválido' : ''}
       />
       <Input
         label='Posição'
@@ -64,7 +86,7 @@ const RegisterScreen:React.FC = () =>  {
       </Picker>
       <ButtonWrapper>
         <RegisterButton onPress={() => {
-          // navigate('Register'  as never, {} as never)
+          validateForm() ? navigate('List' as never, {} as never) : showToast()
         }}>
           <ButtonText>Salvar</ButtonText>
         </RegisterButton>
