@@ -13,16 +13,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {dateMask, cpfMask} from "../utils/masks"
 import { validateCpf, validateDate } from "../utils/validations"
 
-const RegisterScreen:React.FC = () =>  {
-  const [roles, setRoles] = useState(['Goleiro', 'Lateral', 'Zagueiro', 'Volante', 'Meia', 'Atacante'])
-  const [date, setDate] = useState('')
-  const [name, setName] = useState('')
-  const [cpf, setCpf] = useState('')
-  const [position, setPosition] = useState('')
-  const [selected, setSelected] = useState('')
+interface Props {
+  route: any
+}
+
+const RegisterScreen:React.FC<Props> = ({route}) =>  {
+  const params = route.params
+  const [roles, setRoles] = useState(['-','Goleiro', 'Lateral', 'Zagueiro', 'Volante', 'Meia', 'Atacante'])
+  const [date, setDate] = useState(params ? params.user.date : '')
+  const [name, setName] = useState(params ? params.user.name : '')
+  const [cpf, setCpf] = useState(params ? params.user.cpf : '')
+  const [position, setPosition] = useState(params ? params.user.position : '')
+  const [selected, setSelected] = useState(params ? params.user.reserve : '')
   const pushAction = StackActions.push('List')
   const navigation = useNavigation()
 
+console.log(params.user)
   const validateForm = () => {
     return Boolean(date && name && cpf && validateCpf(cpf) && validateDate(date))
   }
@@ -53,6 +59,7 @@ const RegisterScreen:React.FC = () =>  {
         onChangeText={(text: string) => setName(text)}
         placeholder='Nome completo (obrigatório)*'
         errorMessage={''}
+        disabled={params ? true : false}
       />
       <Input
         label='Data de nascimento'
@@ -65,6 +72,7 @@ const RegisterScreen:React.FC = () =>  {
         }}
         placeholder='dd/mm/yyyy (obrigatório)*'
         errorMessage={!validateDate(date) && date !== '' ? 'Data de nascimento inválida' : ''}
+        disabled={params ? true : false}
       />
       <Input
         label='CPF'
@@ -77,6 +85,7 @@ const RegisterScreen:React.FC = () =>  {
         }}
         placeholder='999.999.999-99 (obrigatório)*'
         errorMessage={!validateCpf(cpf) && cpf !== '' ? 'Cpf inválido' : ''}
+        disabled={params ? true : false}
       />
       <ReserveWrapper>
         <ReserveText>Posição</ReserveText>
@@ -98,6 +107,7 @@ const RegisterScreen:React.FC = () =>  {
         selectedValue={selected}
         onValueChange={(item) => setSelected(item)}
       >
+        <Picker.Item color={'#878682'} label='-' value='-'/>
         <Picker.Item color={'#878682'} label='SIM' value='SIM'/>
         <Picker.Item color={'#878682'} label='NÃO' value='NÃO'/>
       </Picker>

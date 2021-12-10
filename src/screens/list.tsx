@@ -12,14 +12,15 @@ import {
   RegisterButton 
 } from "../styles";
 import tactical from './../../assets/tactical.png';
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, Image, Text, TouchableOpacity } from "react-native";
 import edit from './../../assets/edit.png';
 import close from './../../assets/close.png';
 
 export default function ListScreen() {
-  const {navigate} = useNavigation()
+  const navigation = useNavigation()
+  const registerAction = StackActions.push('Register')
   const [usersData, setUsersData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -56,7 +57,10 @@ export default function ListScreen() {
       return (
         <ItemList key={index}>
           <Player> {JSON.parse(item[1]).name} </Player>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            const editAction = StackActions.push('Register', {user: JSON.parse(item[1])})
+            navigation.dispatch(editAction)
+          }}>
             <EditIcon source={edit} />
           </TouchableOpacity>
           <TouchableOpacity>
@@ -87,7 +91,7 @@ export default function ListScreen() {
         )}
         
         <RegisterButton onPress={() => {
-          navigate('Register'  as never, {} as never)
+          navigation.dispatch(registerAction)
         }}>
           <ButtonText>Registrar</ButtonText>
         </RegisterButton>
